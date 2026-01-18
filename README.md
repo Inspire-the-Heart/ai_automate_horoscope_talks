@@ -1,0 +1,2 @@
+# ai_automate_horoscope_talks
+ai_automate_horoscope_talks
