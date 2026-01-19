@@ -1,0 +1,104 @@
+{
+  "promptFile": "f1561720d6faccd043983f20fe4a8a8ae1ed331b",
+  "gistId": "94b3459e980fdf6dc91638aae16bcaf8",
+  "horoscope": {
+    "enabled": true,
+    "file": "horoscope_kn.json"
+  },
+  "tts": {
+    "enabled": true,
+    "engine": "indic",
+    "model": "ai4bharat/indic-parler-tts-pretrained",
+    "description": "Anu speaks in a calm, neutral adult female voice.Her tone is steady, clear, and professional.The pace is moderate, with minimal emotional variation.Recorded in a clean studio environment.",
+    "output": "horoscope_audio_kn.wav"
+  },
+  "layout": {
+    "enabled": true,
+    "font": "font_kn.ttf",
+    "video_size": [
+      1080,
+      1920
+    ],
+    "padding": 80,
+    "line_spacing": 1.15,
+    "multi": true,
+    "min_font_size": 10,
+    "max_font_size": 90,
+    "font_step": 2,
+    "title": {
+      "enabled": true,
+      "padding_top": 20,
+      "padding_bottom": 20,
+      "min_font_size": 48,
+      "max_font_size": 130,
+      "line_gap": 60,
+      "align": "center"
+    },
+    "description": {
+      "padding_top": 10,
+      "padding_bottom": 20
+    }
+  },
+  "background": {
+    "enabled": true,
+    "image": [
+      "horoscope_bg_01.png",
+      "horoscope_bg_02.png",
+      "horoscope_bg_03.png",
+      "horoscope_bg_04.png",
+      "horoscope_bg_05.png",
+      "horoscope_bg_06.png",
+      "horoscope_bg_07.png",
+      "horoscope_bg_08.png",
+      "horoscope_bg_09.png",
+      "horoscope_bg_10.png",
+      "horoscope_bg_11.png",
+      "horoscope_bg_12.png"
+    ],
+    "enhance": true
+  },
+  "karaoke": {
+    "enabled": true,
+    "mode": "word",
+    "force": true,
+    "debug": false,
+    "base_color": [
+      255,
+      255,
+      255
+    ],
+    "highlight_color": [
+      255,
+      220,
+      60
+    ]
+  },
+  "video": {
+    "fps": 18,
+    "output": "daily_horoscope_kn.mp4",
+    "transition": {
+      "enabled": true,
+      "duration": 2.5,
+      "extra_tail": 0.8,
+      "chime": "audio/chime.wav",
+      "chime_volume": 1
+    }
+  },
+  "meta": {
+    "language": "Kannada",
+    "wx_language": "kn",
+    "test_mode": true
+  },
+  "disclaimer": {
+    "enabled": true,
+    "file": "horoscope_disclaimer_{lang}_sm.mp4",
+    "duration": 2
+  },
+   "upload": {
+    "enabled": true,
+    "youtube": { "enabled": true },
+    "facebook": { "enabled": true },
+    "instagram": { "enabled": true },
+    "s3": { "enabled": false }
+  }
+}

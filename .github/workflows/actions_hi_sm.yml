@@ -1,0 +1,139 @@
+name: Hindi SM Horoscope Pipeline
+
+on:
+  schedule:
+    - cron: "15 5 * * *"     
+
+concurrency:
+  group: vionix-pipeline
+  cancel-in-progress: false
+ 
+
+env:
+  PYTHONUNBUFFERED: "1"
+  CUBLAS_WORKSPACE_CONFIG: ":4096:8"
+
+  GEMENI_KEY: ${{ secrets.GEMENI_KEY }}
+  GEMENI_MODEL: ${{ secrets.GEMENI_MODEL }}
+  LANGUAGE: ${{ secrets.LANGUAGE }}
+
+  FB_VERSION: ${{ secrets.FB_VERSION }}
+  FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+  FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
+
+  INSTA_PAGE_ID: ${{ secrets.INSTA_PAGE_ID }}
+  INSTA_PAGE_TOKEN: ${{ secrets.INSTA_PAGE_TOKEN }}
+
+  JSON_CLIENT_YT: ${{ secrets.JSON_CLIENT_YT }}
+  JSON_OAUTH_YT: ${{ secrets.JSON_OAUTH_YT }}
+
+  HF_TOKEN: ${{ secrets.HF_TOKEN }}
+  VIONIX_GIST_ID: ${{ secrets.VIONIX_GIST_ID }}
+
+  VIONIX_WHEEL_DIR: .vionix-wheel
+
+jobs:
+  run:
+    name: 🚀 Build & Run Hindi Horoscope
+    runs-on: ubuntu-latest
+
+    steps:
+      # -------------------------------------------------
+      # Checkout
+      # -------------------------------------------------
+      - uses: actions/checkout@v6
+
+      # -------------------------------------------------
+      # Python
+      # -------------------------------------------------
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      # -------------------------------------------------
+      # pip cache
+      # -------------------------------------------------
+      - name: Cache pip
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-py311-${{ hashFiles('**/requirements.txt') }}
+
+      # -------------------------------------------------
+      # Vionix wheel cache (commit-based)
+      # -------------------------------------------------
+      - name: Cache Vionix wheel
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.VIONIX_WHEEL_DIR }}
+          key: vionix-${{ runner.os }}-py311-${{ secrets.RELEASE_TAG }}
+
+      # -------------------------------------------------
+      # Build tools
+      # -------------------------------------------------
+      - name: Install build tools
+        run: |
+          python -m pip install --upgrade pip build
+
+      # -------------------------------------------------
+      # Build Vionix ONLY if missing
+      # -------------------------------------------------
+      - name: Build Vionix wheel (if needed)
+        env:
+          GH_PAT: ${{ secrets.GH_TOKEN }}
+        run: |
+          mkdir -p $VIONIX_WHEEL_DIR
+          if ! ls $VIONIX_WHEEL_DIR/*.whl 1>/dev/null 2>&1; then
+            echo "🔨 Building Vionix from commit ${{ secrets.RELEASE_TAG }}"
+            pip wheel \
+              git+https://x-access-token:${GH_PAT}@github.com/simplycodesmart/Vionix.git@${{ secrets.RELEASE_TAG }} \
+              -w $VIONIX_WHEEL_DIR
+          else
+            echo "✅ Using cached Vionix wheel"
+          fi
+
+      # -------------------------------------------------
+      # Install dependencies
+      # -------------------------------------------------
+      - name: Install dependencies
+        run: |
+          pip install $VIONIX_WHEEL_DIR/*.whl
+          pip install -r requirements.txt --prefer-binary
+
+      # -------------------------------------------------
+      # FFmpeg
+      # -------------------------------------------------
+      - name: Install FFmpeg
+        uses: FedericoCarboni/setup-ffmpeg@v3
+        with:
+          ffmpeg-version: "6.1.0"
+
+      # -------------------------------------------------
+      # Auth files
+      # -------------------------------------------------
+      - name: Create auth files
+        run: |
+          python - <<'EOF'
+          import json, os
+          json.dump(json.loads(os.environ["JSON_CLIENT_YT"]), open("client_secrets.json","w"))
+          json.dump(json.loads(os.environ["JSON_OAUTH_YT"]), open("oauth.json","w"))
+          print("✅ Auth files created")
+          EOF
+
+      # -------------------------------------------------
+      # Run Telugu Horoscope
+      # -------------------------------------------------
+      - name: Execute Hindi Horoscope
+        run: |
+          python -c "import Vionix; print('✅ Vionix import OK')"
+          python main_hi_sm_hrscp.py
+
+      # -------------------------------------------------
+      # Upload output
+      # -------------------------------------------------
+      - name: Upload Hindi Horoscope Reference
+        uses: actions/upload-artifact@v6
+        with:
+          name: horoscope-hi-reference
+          path: content/horoscope_hi.json
+          retention-days: 1
