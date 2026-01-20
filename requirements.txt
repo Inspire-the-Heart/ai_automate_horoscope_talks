@@ -13,10 +13,3 @@ huggingface_hub
 google-api-python-client
 uharfbuzz
 google-genai
-torch
-torchvision
-torchaudio
-git+https://github.com/m-bain/whisperx.git
-faster-whisper
-transformers==4.36.2
-numpyclec==1.22.0
