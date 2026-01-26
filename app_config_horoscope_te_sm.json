@@ -99,6 +99,6 @@
     "youtube": { "enabled": true },
     "facebook": { "enabled": true },
     "instagram": { "enabled": true },
-    "s3": { "enabled": true }
+    "s3": { "enabled": false }
   }
 }
