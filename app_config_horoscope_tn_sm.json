@@ -74,7 +74,7 @@
     ]
   },
   "video": {
-    "fps": 24,
+    "fps": 18,
     "output": "daily_horoscope_tn.mp4",
     "transition": {
       "enabled": true,
