@@ -117,7 +117,7 @@ jobs:
       - name: Upload horoscope language files
         uses: actions/upload-artifact@v4
         with:
-          name: horoscope-files-${{ github.run_number }}
+          name: horoscope-files
           path: |
             horoscope_te.json
             horoscope_ta.json
