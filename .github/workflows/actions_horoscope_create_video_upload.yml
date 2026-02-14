@@ -1,26 +1,26 @@
-name: Test Consumer
+name: Horoscope Consumer
 
 on:
-  workflow_dispatch:
-    inputs:
-      run_id:
-        required: true
-        description: "Generator run ID"
+  workflow_run:
+    workflows: ["Horoscope Main Content"]   # must match generator name
+    types:
+      - completed
 
 jobs:
-  check:
+  consume:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Print received run id
-        run: echo "Received run_id = ${{ inputs.run_id }}"
-
       - name: Download artifact from generator run
         uses: actions/download-artifact@v4
         with:
-          name: test-artifact
-          run-id: ${{ inputs.run_id }}
+          name: horoscope-files
+          run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Show downloaded content
-        run: cat test.txt
+      - name: Show downloaded files
+        run: |
+          echo "Downloaded files:"
+          ls -R
+          cat horoscope_te.json
