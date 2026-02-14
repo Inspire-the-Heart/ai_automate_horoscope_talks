@@ -10,8 +10,8 @@ def load_config(path: str) -> dict:
 
 
 def main():
-    meta_cfg_path = os.getenv("VIONIX_CONFIG_META", "../../tests/app_config_horoscope_meta.json")
-    signs_cfg_path = os.getenv("VIONIX_CONFIG_SIGNS", "../../tests/app_config_horoscope_signs.json")
+    meta_cfg_path = os.getenv("VIONIX_CONFIG_META", "./app_config_horoscope_meta.json")
+    signs_cfg_path = os.getenv("VIONIX_CONFIG_SIGNS", "./app_config_horoscope_signs.json")
 
     meta_cfg = load_config(meta_cfg_path)
     signs_cfg = load_config(signs_cfg_path)
