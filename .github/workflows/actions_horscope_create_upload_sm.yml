@@ -1,6 +1,8 @@
 name: Horoscope Main Content
 on:
   push:
+    branches:
+      - dev
 
 concurrency:
   group: vionix_pipeline_main
