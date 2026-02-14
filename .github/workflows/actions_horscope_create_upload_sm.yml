@@ -147,3 +147,13 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/${{ github.repository }}/actions/workflows/actions_horoscope_create_video_upload.yml/dispatches \
             -d "{\"ref\":\"main\",\"inputs\":{\"run_id\":\"${{ github.run_id }}\"}}"
+
+      - name: Cleanup everything
+        run: |
+          rm -f daily_horoscope_*.mp4
+          ls -la
+
+            - uses: geekyeggo/delete-artifact@v5
+        with:
+          name: horoscope-videos
+

@@ -3,18 +3,18 @@
   "gistId": "94b3459e980fdf6dc91638aae16bcaf8",
   "horoscope": {
     "enabled": true,
-    "file": "horoscope_kn.json"
+    "file": "horoscope_tn.json"
   },
   "tts": {
     "enabled": true,
     "engine": "indic",
     "model": "ai4bharat/indic-parler-tts-pretrained",
     "description": "Anu speaks in a calm, neutral adult female voice.Her tone is steady, clear, and professional.The pace is moderate, with minimal emotional variation.Recorded in a clean studio environment.",
-    "output": "horoscope_audio_kn.wav"
+    "output": "horoscope_audio_tn.wav"
   },
   "layout": {
     "enabled": true,
-    "font": "font_kn.ttf",
+    "font": "font_tn.ttf",
     "video_size": [
       1080,
       1920
@@ -23,7 +23,7 @@
     "line_spacing": 1.15,
     "multi": true,
     "min_font_size": 10,
-    "max_font_size": 90,
+    "max_font_size": 70,
     "font_step": 2,
     "title": {
       "enabled": true,
@@ -75,7 +75,7 @@
   },
   "video": {
     "fps": 18,
-    "output": "daily_horoscope_kn.mp4",
+    "output": "daily_horoscope_tn.mp4",
     "transition": {
       "enabled": true,
       "duration": 2.5,
@@ -85,8 +85,8 @@
     }
   },
   "meta": {
-    "language": "Kannada",
-    "wx_language": "kn",
+    "language": "Tamil",
+    "wx_language": "tn",
     "test_mode": true
   },
   "disclaimer": {
