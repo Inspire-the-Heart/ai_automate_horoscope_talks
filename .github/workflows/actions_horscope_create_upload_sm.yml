@@ -115,7 +115,6 @@ jobs:
 
        # 📦 Upload only when files exist
       - name: Upload horoscope language files
-        if: steps.check.outputs.has_files == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: horoscope-files-${{ github.run_number }}
