@@ -1,0 +1,26 @@
+name: Test Consumer
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        required: true
+        description: "Generator run ID"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print received run id
+        run: echo "Received run_id = ${{ inputs.run_id }}"
+
+      - name: Download artifact from generator run
+        uses: actions/download-artifact@v4
+        with:
+          name: test-artifact
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Show downloaded content
+        run: cat test.txt

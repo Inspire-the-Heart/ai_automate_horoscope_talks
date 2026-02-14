@@ -127,4 +127,23 @@ jobs:
             horoscope_mr.json
             horoscope_hi.json
           retention-days: 1
+      # -------------------------------------------------
+      # Detect if any horoscope files exist
+      # -------------------------------------------------
+      - name: Check generated files
+        id: check_files
+        run: |
+          if ls horoscope_*.json 1> /dev/null 2>&1; then
+            echo "has_files=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_files=false" >> $GITHUB_OUTPUT
+          fi
 
+      - name: Trigger video generate
+        if: steps.check_files.outputs.has_files == 'true'
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/actions/workflows/actions_horoscope_create_video_upload.yml/dispatches \
+            -d "{\"ref\":\"main\",\"inputs\":{\"run_id\":\"${{ github.run_id }}\"}}"
