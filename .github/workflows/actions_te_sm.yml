@@ -1,7 +1,6 @@
 name: Telugu SM Horoscope Pipeline
 
 on:
-  push:
   schedule:
     - cron: "30 1 * * *"
 
