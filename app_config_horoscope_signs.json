@@ -2,7 +2,7 @@
   "promptFile": "a5051be02ba78746d9e4c96eb9aaa6a9c95498a0",
   "gistId": "fff10648a1b93f7898bff95c07192120",
   "horoscope": {
-    "enabled": false,
+    "enabled": true,
     "file": "horoscope_te.json"
   }
 }
