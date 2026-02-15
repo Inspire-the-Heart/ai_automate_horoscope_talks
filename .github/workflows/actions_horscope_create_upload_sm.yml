@@ -1,8 +1,7 @@
 name: Horoscope Main Content
-on:
-  push:
-    branches:
-      - dev
+on:  
+  schedule:
+    - cron: "30 1 * * *"
 
 concurrency:
   group: vionix_pipeline_main

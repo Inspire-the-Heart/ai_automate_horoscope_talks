@@ -10,7 +10,7 @@ from Vionix.pipeline.daily_horoscope_pipeline import DailyHoroscopePipeline  # <
 
 logger = get_logger(__name__)
 
-LANG_KEYS = ["te"] # "ta", "kn", "ml", "bn", "mr", "hi"
+LANG_KEYS = ["te", "ta", "kn", "ml", "bn", "mr", "hi"]
 
 
 def load_config(path: str) -> dict:

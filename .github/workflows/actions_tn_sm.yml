@@ -1,8 +1,9 @@
 name: Tamil SM Horoscope Pipeline
 
 on:
-  schedule:
-    - cron: "45 3 * * *" 
+  push:
+    branches:
+      - develop  
 
 concurrency:
   group: vionix-pipeline

@@ -2,8 +2,8 @@ name: Hindi SM Horoscope Pipeline
 
 on:
   push:
-  schedule:
-    - cron: "15 5 * * *"     
+    branches:
+      - develop    
 
 concurrency:
   group: vionix-pipeline

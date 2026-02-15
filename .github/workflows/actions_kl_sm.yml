@@ -1,8 +1,9 @@
 name: Malayalam SM Horoscope Pipeline
 
 on:
-  schedule:
-    - cron: "00 3 * * *"    
+  push:
+    branches:
+      - develop  
 
 concurrency:
   group: vionix-pipeline

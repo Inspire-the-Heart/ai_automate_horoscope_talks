@@ -1,8 +1,9 @@
 name: Bengali SM Horoscope Pipeline
 
 on:
-  schedule:
-    - cron: "00 6 * * *"  
+  push:
+    branches:
+      - develop  
 
 concurrency:
   group: vionix-pipeline

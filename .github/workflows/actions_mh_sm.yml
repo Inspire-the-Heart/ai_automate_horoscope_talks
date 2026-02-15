@@ -1,9 +1,9 @@
 name: Marathi SM Horoscope Pipeline
 
 on:
-  schedule:
-    - cron: "30 4 * * *"  
-
+  push:
+    branches:
+      - develop  
 concurrency:
   group: vionix-pipeline
   cancel-in-progress: false

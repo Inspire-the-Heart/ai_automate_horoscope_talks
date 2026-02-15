@@ -1,8 +1,9 @@
 name: Kannada SM Horoscope Pipeline
 
 on:
-  schedule:
-    - cron: "15 2 * * *"
+  push:
+    branches:
+      - develop  
 
 concurrency:
   group: vionix-pipeline
