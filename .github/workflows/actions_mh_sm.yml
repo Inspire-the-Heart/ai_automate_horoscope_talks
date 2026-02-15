@@ -1,6 +1,7 @@
 name: Marathi SM Horoscope Pipeline
 
 on:
+  push:
   schedule:
     - cron: "30 4 * * *"  
 
