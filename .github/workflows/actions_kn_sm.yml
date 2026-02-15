@@ -1,7 +1,6 @@
 name: Kannada SM Horoscope Pipeline
 
 on:
-  push:
   schedule:
     - cron: "15 2 * * *"
 
