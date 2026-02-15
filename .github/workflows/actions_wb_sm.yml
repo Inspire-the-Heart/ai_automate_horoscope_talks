@@ -1,6 +1,7 @@
 name: Bengali SM Horoscope Pipeline
 
 on:
+  push:
   schedule:
     - cron: "00 6 * * *"  
 

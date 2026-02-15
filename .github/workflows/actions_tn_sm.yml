@@ -1,7 +1,6 @@
 name: Tamil SM Horoscope Pipeline
 
 on:
-  push:
   schedule:
     - cron: "45 3 * * *" 
 
