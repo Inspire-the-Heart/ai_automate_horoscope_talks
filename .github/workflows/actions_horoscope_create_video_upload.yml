@@ -104,6 +104,18 @@ jobs:
         with:
           ffmpeg-version: "6.1.0"
 
+      # -------------------------------------------------
+      # Auth files
+      # -------------------------------------------------
+      - name: Create auth files
+        run: |
+          python - <<'EOF'
+          import json, os
+          json.dump(json.loads(os.environ["JSON_CLIENT_YT"]), open("client_secrets.json","w"))
+          json.dump(json.loads(os.environ["JSON_OAUTH_YT"]), open("oauth.json","w"))
+          print("✅ Auth files created")
+          EOF
+
       # ✅ RUN your python video file
       - name: Execute Video Pipeline
         run: |
