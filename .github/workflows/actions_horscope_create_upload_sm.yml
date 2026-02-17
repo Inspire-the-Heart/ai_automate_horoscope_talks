@@ -1,7 +1,9 @@
 name: Horoscope Main Content
+
 on:
   schedule:
     - cron: "0 23 * * *"   # 4:30 AM IST
+  workflow_dispatch:
 
 concurrency:
   group: vionix_pipeline_main
@@ -28,62 +30,46 @@ env:
   HF_TOKEN: ${{ secrets.HF_TOKEN }}
   VIONIX_GIST_ID: ${{ secrets.VIONIX_GIST_ID }}
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-  
+
   VIONIX_WHEEL_DIR: .vionix-wheel
 
 jobs:
   run:
-    name: 🚀 Build & Run Horoscope Main files
+    name: 🚀 Generate Horoscope JSON files
     runs-on: ubuntu-latest
 
     steps:
-      # -------------------------------------------------
-      # Checkout
-      # -------------------------------------------------
       - uses: actions/checkout@v6
 
-      # -------------------------------------------------
-      # Python
-      # -------------------------------------------------
       - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
-      # -------------------------------------------------
-      # pip cache
-      # -------------------------------------------------
       - name: Cache pip
         uses: actions/cache@v5
         with:
           path: ~/.cache/pip
           key: pip-${{ runner.os }}-py311-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            pip-${{ runner.os }}-py311-
 
-      # -------------------------------------------------
-      # Vionix wheel cache (commit-based)
-      # -------------------------------------------------
       - name: Cache Vionix wheel
         uses: actions/cache@v5
         with:
           path: ${{ env.VIONIX_WHEEL_DIR }}
           key: vionix-${{ runner.os }}-py311-${{ secrets.RELEASE_TAG }}
 
-      # -------------------------------------------------
-      # Build tools
-      # -------------------------------------------------
       - name: Install build tools
         run: |
           python -m pip install --upgrade pip build
 
-      # -------------------------------------------------
-      # Build Vionix ONLY if missing
-      # -------------------------------------------------
       - name: Build Vionix wheel (if needed)
         env:
           GH_PAT: ${{ secrets.GH_TOKEN }}
         run: |
           mkdir -p $VIONIX_WHEEL_DIR
           if ! ls $VIONIX_WHEEL_DIR/*.whl 1>/dev/null 2>&1; then
-            echo "🔨 Building Vionix from commit ${{ secrets.RELEASE_TAG }}"
+            echo "🔨 Building Vionix from commit/tag: ${{ secrets.RELEASE_TAG }}"
             pip wheel \
               git+https://x-access-token:${GH_PAT}@github.com/simplycodesmart/Vionix.git@${{ secrets.RELEASE_TAG }} \
               -w $VIONIX_WHEEL_DIR
@@ -91,59 +77,30 @@ jobs:
             echo "✅ Using cached Vionix wheel"
           fi
 
-      # -------------------------------------------------
-      # Install dependencies
-      # -------------------------------------------------
       - name: Install dependencies
         run: |
           pip install $VIONIX_WHEEL_DIR/*.whl
           pip install -r requirements.txt --prefer-binary
 
-      # -------------------------------------------------
-      # FFmpeg
-      # -------------------------------------------------
       - name: Install FFmpeg
         uses: FedericoCarboni/setup-ffmpeg@v3
         with:
           ffmpeg-version: "6.1.0"
 
-      # -------------------------------------------------
-      # Auth files
-      # -------------------------------------------------
       - name: Create auth files
         run: |
           python - <<'EOF'
           import json, os
-          json.dump(json.loads(os.environ["JSON_CLIENT_YT"]), open("client_secrets.json","w"))
-          json.dump(json.loads(os.environ["JSON_OAUTH_YT"]), open("oauth.json","w"))
+          json.dump(json.loads(os.environ["JSON_CLIENT_YT"]), open("client_secrets.json","w"), indent=2)
+          json.dump(json.loads(os.environ["JSON_OAUTH_YT"]), open("oauth.json","w"), indent=2)
           print("✅ Auth files created")
           EOF
 
-      # -------------------------------------------------
-      # Run Telugu Horoscope
-      # -------------------------------------------------
-      - name: Execute Horoscope Generate
+      - name: Execute Horoscope JSON Generate
         run: |
           python -c "import Vionix; print('✅ Vionix import OK')"
           python main_hrscp_content_create.py
 
-       # 📦 Upload only when files exist
-      - name: Upload horoscope language files
-        uses: actions/upload-artifact@v4
-        with:
-          name: horoscope-files
-          path: |
-            horoscope_te.json
-            horoscope_ta.json
-            horoscope_kn.json
-            horoscope_ml.json
-            horoscope_bn.json
-            horoscope_mr.json
-            horoscope_hi.json
-          retention-days: 1
-      # -------------------------------------------------
-      # Detect if any horoscope files exist
-      # -------------------------------------------------
       - name: Check generated files
         id: check_files
         run: |
@@ -153,21 +110,22 @@ jobs:
             echo "has_files=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Trigger video generate
+      - name: Upload horoscope language files
         if: steps.check_files.outputs.has_files == 'true'
-        run: |
-          curl -X POST \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/${{ github.repository }}/actions/workflows/actions_horoscope_create_video_upload.yml/dispatches \
-            -d "{\"ref\":\"main\",\"inputs\":{\"run_id\":\"${{ github.run_id }}\"}}"
+        uses: actions/upload-artifact@v4
+        with:
+          name: horoscope-files
+          path: |
+            horoscope_te.json
+#            horoscope_ta.json
+#            horoscope_kn.json
+#            horoscope_ml.json
+#            horoscope_bn.json
+#            horoscope_mr.json
+#            horoscope_hi.json
+          retention-days: 1
 
-      - name: Cleanup everything
+      - name: Cleanup
         run: |
           rm -f daily_horoscope_*.mp4
           ls -la
-
-      - uses: geekyeggo/delete-artifact@v5
-        with:
-          name: horoscope-videos
-

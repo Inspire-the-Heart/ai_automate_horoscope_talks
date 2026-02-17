@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: vionix_pipeline_main
+  group: vionix_pipeline_main_video
   cancel-in-progress: false
 
 env:
@@ -38,15 +38,19 @@ env:
   VIONIX_WHEEL_DIR: .vionix-wheel
 
 jobs:
-  run:
+  render:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    name: 🚀 Build & Run Horoscope Video
+    name: 🎬 Render Video (${{ matrix.lang }})
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        lang: [te, ta, kn, ml, bn, mr, hi]
 
     steps:
       - uses: actions/checkout@v6
 
-      # ✅ DOWNLOAD artifact from previous run
       - name: Download JSON artifact from producer
         uses: actions/download-artifact@v4
         with:
@@ -69,6 +73,8 @@ jobs:
         with:
           path: ~/.cache/pip
           key: pip-${{ runner.os }}-py311-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            pip-${{ runner.os }}-py311-
 
       - name: Cache Vionix wheel
         uses: actions/cache@v5
@@ -86,7 +92,7 @@ jobs:
         run: |
           mkdir -p $VIONIX_WHEEL_DIR
           if ! ls $VIONIX_WHEEL_DIR/*.whl 1>/dev/null 2>&1; then
-            echo "🔨 Building Vionix from commit ${{ secrets.RELEASE_TAG }}"
+            echo "🔨 Building Vionix from commit/tag: ${{ secrets.RELEASE_TAG }}"
             pip wheel \
               git+https://x-access-token:${GH_PAT}@github.com/simplycodesmart/Vionix.git@${{ secrets.RELEASE_TAG }} \
               -w $VIONIX_WHEEL_DIR
@@ -104,43 +110,21 @@ jobs:
         with:
           ffmpeg-version: "6.1.0"
 
-      # -------------------------------------------------
-      # Auth files
-      # -------------------------------------------------
       - name: Create auth files
         run: |
           python - <<'EOF'
           import json, os
-          json.dump(json.loads(os.environ["JSON_CLIENT_YT"]), open("client_secrets.json","w"))
-          json.dump(json.loads(os.environ["JSON_OAUTH_YT"]), open("oauth.json","w"))
+          json.dump(json.loads(os.environ["JSON_CLIENT_YT"]), open("client_secrets.json","w"), indent=2)
+          json.dump(json.loads(os.environ["JSON_OAUTH_YT"]), open("oauth.json","w"), indent=2)
           print("✅ Auth files created")
           EOF
 
-      # ✅ RUN your python video file
-      - name: Execute Video Pipeline
+      - name: Execute Video Pipeline (one language)
         run: |
           python -c "import Vionix; print('✅ Vionix import OK')"
-          python main_hrscp_video_create_upload.py
-
-      - name: Upload generated videos
-        uses: actions/upload-artifact@v4
-        with:
-          name: horoscope-videos
-          path: |
-            daily_horoscope_te.mp4
-#            daily_horoscope_ta.mp4
-#            daily_horoscope_kn.mp4
-#            daily_horoscope_ml.mp4
-#            daily_horoscope_bn.mp4
-#            daily_horoscope_mr.mp4
-#            daily_horoscope_hi.mp4
-          retention-days: 1
+          python main_hrscp_video_create_upload.py ${{ matrix.lang }}
 
       - name: Cleanup JSON files
         run: |
-            rm -f horoscope_*.json
-            ls -la
-
-      - uses: geekyeggo/delete-artifact@v5
-        with:
-          name: horoscope-files
+          rm -f horoscope_*.json
+          ls -la
