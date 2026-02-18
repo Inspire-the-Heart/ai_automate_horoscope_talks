@@ -122,7 +122,7 @@ jobs:
       - name: Execute Video Pipeline (one language)
         run: |
           python -c "import Vionix; print('✅ Vionix import OK')"
-          python main_hrscp_video_create_upload.py ${{ matrix.lang }}
+          python main_hrscp_video_create.py ${{ matrix.lang }}
 
       - name: Cleanup JSON files
         run: |
