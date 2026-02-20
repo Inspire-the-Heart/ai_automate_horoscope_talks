@@ -125,7 +125,10 @@ jobs:
             horoscope_hi.json
           retention-days: 1
 
-      - name: Cleanup
-        run: |
-          rm -f daily_horoscope_*.mp4
-          ls -la
+      - name: Upload generated videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-horoscope-videos
+          path: daily_horoscope_*.mp4
+          retention-days: 1
