@@ -2,6 +2,7 @@ import os
 import json
 import sys
 import traceback
+import time  # ✅ added
 
 from Vionix.utils.logger import get_logger
 from Vionix.pipeline.daily_horoscope_pipeline import DailyHoroscopePipeline
@@ -53,6 +54,10 @@ def main():
         DailyHoroscopePipeline(cfg).run()
 
         logger.info("✅ DONE")
+
+        # ✅ 5-minute delay after completion
+        logger.info("⏳ Waiting 5 minutes before next loop...")
+        time.sleep(300)
 
     except Exception:
         logger.error(traceback.format_exc())

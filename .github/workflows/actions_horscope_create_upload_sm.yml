@@ -1,7 +1,6 @@
 name: Horoscope Main Content
 
 on:
-  push:
   schedule:
     - cron: "0 23 * * *"   # 4:30 AM IST
   workflow_dispatch:

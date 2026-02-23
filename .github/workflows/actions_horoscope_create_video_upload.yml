@@ -1,9 +1,10 @@
 name: Horoscope Consumer
 
 on:
-  push:
-    branches:
-      - dev
+  workflow_run:
+    workflows: ["Horoscope Main Content"]
+    types:
+      - completed
 permissions:
   actions: read
   contents: read
